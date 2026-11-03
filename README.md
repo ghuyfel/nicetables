@@ -212,6 +212,36 @@ stripe tints, dividers, focus ring, text styles (cell, subtitle, mono),
 status palette, radius, paddings, density and the hover animation
 duration.
 
+### Localisation
+
+Every piece of text the table draws itself lives in `NiceTableStrings`,
+English by default: the search placeholder, the footer labels and
+tooltips, the column picker and density menu, the empty, no-match and
+error states, the boolean cell's yes/no, the copy and row-action tooltips.
+
+```dart
+// App-wide, above your pages:
+NiceTableStringsScope(
+  strings: NiceTableStrings(
+    search: 'Rechercher',
+    rows: 'lignes',
+    rowsPerPage: 'Lignes par page',
+    rowRange: (first, last, total, rowLabel) => '$first a $last sur $total',
+    emptyTitle: 'Rien pour le moment',
+  ),
+  child: child,
+)
+
+// Per table (wins over the scope):
+NiceTable(strings: myStrings, ...)
+```
+
+Counts reach the function-typed fields (`rowCount`, `rowRange`,
+`pageOfCount`, `selectedCount`, `selectAllCount`, `copiedAsCsv`,
+`noMatchTitle`) as numbers, so a translation can order and format them.
+`searchHint`, `emptyTitle` and `rowLabel` on the table still override the
+corresponding strings when passed.
+
 ### Layout
 
 Give the table a bounded height (`Expanded`, `SizedBox`) and rows scroll

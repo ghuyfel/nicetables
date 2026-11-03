@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../controller/nice_table_controller.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
-import '../model/nice_format.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 
 /// Builds bulk action widgets for the current selection.
@@ -110,6 +110,8 @@ class NiceTableToolbar<T> extends StatefulWidget {
 }
 
 class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
+  NiceTableStrings get _strings => NiceTableStrings.of(context);
+
   late final TextEditingController _search =
       TextEditingController(text: widget.controller.search);
   Timer? _debounce;
@@ -226,7 +228,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     onDeleted: () => c.removeFilter(entry.key),
-                    deleteButtonTooltipMessage: 'Remove filter',
+                    deleteButtonTooltipMessage: _strings.removeFilter,
                   ),
                 TextButton(
                   onPressed: c.clearFilters,
@@ -234,7 +236,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
                     foregroundColor: theme.mutedForeground,
                     visualDensity: VisualDensity.compact,
                   ),
-                  child: const Text('Clear all'),
+                  child: Text(_strings.clearAll),
                 ),
               ],
             ),
@@ -250,8 +252,8 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
     if (widget.title == null && widget.subtitle == null) {
       return const SizedBox.shrink();
     }
-    final subtitle = widget.subtitle ??
-        '${NiceFormat.number(widget.totalRows)} ${widget.rowLabel}';
+    final subtitle =
+        widget.subtitle ?? _strings.rowCount(widget.totalRows, widget.rowLabel);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +311,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
         child: Row(
           children: [
             IconButton(
-              tooltip: 'Clear selection',
+              tooltip: _strings.clearSelection,
               iconSize: 18,
               visualDensity: VisualDensity.compact,
               color: theme.accent,
@@ -317,7 +319,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
               icon: const Icon(Icons.close_rounded),
             ),
             Text(
-              '${NiceFormat.number(count)} selected',
+              _strings.selectedCount(count),
               style: theme.cellTextStyle.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.accent,
@@ -332,7 +334,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
                   foregroundColor: theme.accent,
                   visualDensity: VisualDensity.compact,
                 ),
-                child: Text('Select all ${NiceFormat.number(all.length)}'),
+                child: Text(_strings.selectAllCount(all.length)),
               ),
             ],
             const SizedBox(width: 8),
@@ -404,7 +406,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
                 ),
             ],
             builder: (context, menu, _) => IconButton(
-              tooltip: 'Columns',
+              tooltip: _strings.columns,
               color: iconColor,
               onPressed: () => menu.isOpen ? menu.close() : menu.open(),
               icon: const Icon(Icons.view_column_outlined, size: 20),
@@ -428,13 +430,13 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
                   color: theme.accent,
                 ),
                 child: Text(
-                  '${d.name[0].toUpperCase()}${d.name.substring(1)}',
+                  _strings.densityLabel(d),
                   style: theme.cellTextStyle,
                 ),
               ),
           ],
           builder: (context, menu, _) => IconButton(
-            tooltip: 'Density',
+            tooltip: _strings.density,
             color: iconColor,
             onPressed: () => menu.isOpen ? menu.close() : menu.open(),
             icon: const Icon(Icons.density_medium_rounded, size: 20),
@@ -446,7 +448,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
     if (widget.onExport != null) {
       items.add(
         IconButton(
-          tooltip: 'Export CSV',
+          tooltip: _strings.exportCsv,
           color: iconColor,
           onPressed: widget.onExport,
           icon: const Icon(Icons.download_outlined, size: 20),
@@ -457,7 +459,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
     if (widget.onRefresh != null) {
       items.add(
         IconButton(
-          tooltip: 'Refresh',
+          tooltip: _strings.refresh,
           color: iconColor,
           onPressed: widget.loading ? null : widget.onRefresh,
           icon: widget.loading
@@ -507,7 +509,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
           suffixIcon: _search.text.isEmpty
               ? null
               : IconButton(
-                  tooltip: 'Clear search',
+                  tooltip: _strings.clearSearch,
                   iconSize: 16,
                   color: theme.mutedForeground,
                   onPressed: () {

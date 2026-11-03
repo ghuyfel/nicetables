@@ -1,3 +1,20 @@
+## 1.1.0
+
+- `NiceTableStrings`: every piece of text a table draws itself (search
+  placeholder, footer labels and tooltips, column picker, density menu,
+  export and refresh tooltips, empty, no-match and error states, the
+  boolean cell's yes/no, copy and row-action tooltips) in one object,
+  English by default. Pass one to `NiceTable.strings` or
+  `NiceAsyncTable.strings`, or wrap the app in a `NiceTableStringsScope`
+  to translate every table at once; the table argument wins over the
+  scope. Counts reach the function-typed fields as numbers so a
+  translation can order and format them.
+- `NiceTable.searchHint`, `emptyTitle` and `rowLabel` (and the same on
+  `NiceAsyncTable`) are now nullable and default to the strings; passing
+  them still overrides. `NiceEmptyState.title` and `NiceErrorState.title`
+  likewise. `NiceColumn.displayText` takes an optional `strings` for the
+  boolean text.
+
 ## 1.0.0
 
 First stable release.

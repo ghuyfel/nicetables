@@ -5,7 +5,8 @@
 /// [NiceColumn]s whose single `value` callback drives sorting, search,
 /// filtering, export and the responsive card layout. All state lives in
 /// an optional [NiceTableController]; all looks live in [NiceTableTheme],
-/// derived from your app theme by default.
+/// derived from your app theme by default; all text the table draws itself
+/// lives in [NiceTableStrings], English by default.
 library;
 
 export 'src/cells/nice_cells.dart';
@@ -18,6 +19,7 @@ export 'src/model/nice_format.dart';
 export 'src/model/nice_query.dart';
 export 'src/model/nice_sort.dart';
 export 'src/model/nice_status.dart';
+export 'src/model/nice_table_strings.dart';
 export 'src/theme/nice_table_theme.dart';
 export 'src/widgets/nice_async_table.dart';
 export 'src/widgets/nice_card_list.dart' show NiceCardBuilder;
