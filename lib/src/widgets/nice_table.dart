@@ -94,6 +94,7 @@ class NiceTable<T> extends StatefulWidget {
     this.paged = true,
     this.pageSizeOptions = const [10, 25, 50, 100],
     this.showFooter = true,
+    this.showPageJump = true,
     this.density,
     this.theme,
     this.compactBreakpoint = 600,
@@ -216,6 +217,9 @@ class NiceTable<T> extends StatefulWidget {
 
   /// Whether the footer is shown.
   final bool showFooter;
+
+  /// Whether the footer offers a "go to page" field once pages are elided.
+  final bool showPageJump;
 
   /// Density override.
   final NiceDensity? density;
@@ -592,6 +596,7 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
                   pageSizeOptions: widget.pageSizeOptions,
                   paged: widget.paged,
                   rowLabel: widget.rowLabel,
+                  showPageJump: widget.showPageJump,
                 )
               : null;
 

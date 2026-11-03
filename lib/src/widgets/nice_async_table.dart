@@ -77,6 +77,7 @@ class NiceAsyncTable<T> extends StatefulWidget {
     this.resizableColumns = true,
     this.pageSizeOptions = const [10, 25, 50, 100],
     this.showFooter = true,
+    this.showPageJump = true,
     this.density,
     this.theme,
     this.compactBreakpoint = 600,
@@ -175,6 +176,9 @@ class NiceAsyncTable<T> extends StatefulWidget {
 
   /// Footer visibility.
   final bool showFooter;
+
+  /// "Go to page" field in the footer.
+  final bool showPageJump;
 
   /// Density override.
   final NiceDensity? density;
@@ -293,6 +297,7 @@ class _NiceAsyncTableState<T> extends State<NiceAsyncTable<T>> {
         resizableColumns: widget.resizableColumns,
         pageSizeOptions: widget.pageSizeOptions,
         showFooter: widget.showFooter,
+        showPageJump: widget.showPageJump,
         density: widget.density,
         theme: widget.theme,
         compactBreakpoint: widget.compactBreakpoint,

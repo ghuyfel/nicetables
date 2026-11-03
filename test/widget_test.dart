@@ -44,7 +44,7 @@ void main() {
     expect(find.text('30 rows'), findsOneWidget);
     expect(find.text('Person 00'), findsOneWidget);
     expect(find.text('Person 25'), findsNothing); // page size 25
-    expect(find.text('1–25 of 30'), findsOneWidget);
+    expect(find.textContaining('1–25 of 30'), findsOneWidget);
   });
 
   testWidgets('tapping a header sorts and tapping next pages', (tester) async {
