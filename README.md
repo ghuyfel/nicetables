@@ -73,6 +73,14 @@ Dark mode and brand colours come from `Theme.of(context)` with no setup.
   status chips announce their state; contrast-checked status palettes;
   reduced-motion aware skeletons.
 
+## Installation
+
+```bash
+flutter pub add nicetables
+```
+
+Requires Flutter 3.27 or newer. No other dependencies.
+
 ## Usage
 
 ### Columns
