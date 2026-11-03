@@ -21,7 +21,8 @@ List<NiceColumn<Person>> columns() => [
       NiceColumn.boolean('active', 'Active', (p) => p.active),
     ];
 
-Widget wrap(Widget child, {Size size = const Size(1000, 700), bool dark = false}) =>
+Widget wrap(Widget child,
+        {Size size = const Size(1000, 700), bool dark = false}) =>
     MaterialApp(
       theme: ThemeData(brightness: dark ? Brightness.dark : Brightness.light),
       home: Scaffold(
@@ -34,7 +35,8 @@ Widget wrap(Widget child, {Size size = const Size(1000, 700), bool dark = false}
 void main() {
   testWidgets('renders header, first page and footer', (tester) async {
     await tester.pumpWidget(
-      wrap(NiceTable<Person>(rows: people, columns: columns(), title: 'People')),
+      wrap(
+          NiceTable<Person>(rows: people, columns: columns(), title: 'People')),
     );
     await tester.pumpAndSettle();
     expect(find.text('NAME'), findsOneWidget);
@@ -145,7 +147,8 @@ void main() {
   testWidgets('loading skeleton, error and retry', (tester) async {
     var retried = false;
     await tester.pumpWidget(
-      wrap(NiceTable<Person>(rows: const [], columns: columns(), loading: true)),
+      wrap(
+          NiceTable<Person>(rows: const [], columns: columns(), loading: true)),
     );
     await tester.pump();
     expect(find.bySemanticsLabel('Loading'), findsOneWidget);
@@ -210,7 +213,8 @@ void main() {
             if (q.search == 'fail') throw StateError('nope');
             final start = q.offset.clamp(0, people.length);
             final end = (start + q.pageSize).clamp(0, people.length);
-            return NicePage(rows: people.sublist(start, end), total: people.length);
+            return NicePage(
+                rows: people.sublist(start, end), total: people.length);
           },
         ),
       ),

@@ -73,7 +73,8 @@ void main() {
         NiceFilter.equals(value: ok, valueOf: (i) => i.status),
       );
       expect(c.page, 0);
-      expect(c.process(items, columns).matchingRows.map((i) => i.id), [1, 3, 5]);
+      expect(
+          c.process(items, columns).matchingRows.map((i) => i.id), [1, 3, 5]);
       c.setFilter(
         'amount',
         NiceFilter.range(min: 2, max: null, valueOf: (i) => i.amount),
@@ -155,7 +156,8 @@ void main() {
     test('encodes with header, quoting and skips action columns', () {
       final cols = [
         ...columns,
-        NiceColumn<Item>.actions('a', (_, __, ___) => throw UnimplementedError()),
+        NiceColumn<Item>.actions(
+            'a', (_, __, ___) => throw UnimplementedError()),
       ];
       final csv = NiceCsv.encode(
         [const Item(1, 'has, comma', 1234.5, ok)],
@@ -174,7 +176,8 @@ void main() {
       expect(NiceFormat.number(0.1 + 0.2, decimals: 1), '0.3');
     });
     test('dates and bytes', () {
-      expect(NiceFormat.dateTime(DateTime(2026, 1, 5, 9, 7)), '2026-01-05 09:07');
+      expect(
+          NiceFormat.dateTime(DateTime(2026, 1, 5, 9, 7)), '2026-01-05 09:07');
       expect(
         NiceFormat.relative(
           DateTime(2026, 1, 1, 10),

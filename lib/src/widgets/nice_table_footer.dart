@@ -58,9 +58,12 @@ class NiceTableFooter<T> extends StatelessWidget {
               }
               final options = {...pageSizeOptions, controller.pageSize}.toList()
                 ..sort();
+              // Three tiers: full (labels, page text, first/last), medium
+              // (no labels), narrow (no first/last, terse range).
+              final medium = constraints.maxWidth < 760;
               return Row(
                 children: [
-                  if (!narrow) ...[
+                  if (!medium) ...[
                     Text('Rows per page', style: muted),
                     const SizedBox(width: 8),
                   ],
@@ -70,17 +73,21 @@ class NiceTableFooter<T> extends StatelessWidget {
                     onChanged: controller.setPageSize,
                   ),
                   const Spacer(),
-                  Text(
-                    narrow && total > 0
-                        ? '${NiceFormat.number(controller.firstRowNumber)}–'
-                            '${NiceFormat.number(controller.lastRowNumber)}'
-                            ' / ${NiceFormat.number(total)}'
-                        : total == 0
-                        ? '0 $rowLabel'
-                        : '${NiceFormat.number(controller.firstRowNumber)}–'
-                            '${NiceFormat.number(controller.lastRowNumber)}'
-                            ' of ${NiceFormat.number(total)}',
-                    style: muted,
+                  Flexible(
+                    child: Text(
+                      narrow && total > 0
+                          ? '${NiceFormat.number(controller.firstRowNumber)}–'
+                              '${NiceFormat.number(controller.lastRowNumber)}'
+                              ' / ${NiceFormat.number(total)}'
+                          : total == 0
+                              ? '0 $rowLabel'
+                              : '${NiceFormat.number(controller.firstRowNumber)}–'
+                                  '${NiceFormat.number(controller.lastRowNumber)}'
+                                  ' of ${NiceFormat.number(total)}',
+                      style: muted,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   if (!narrow)
@@ -98,7 +105,7 @@ class NiceTableFooter<T> extends StatelessWidget {
                         ? controller.previousPage
                         : null,
                   ),
-                  if (!narrow)
+                  if (!medium)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Text(

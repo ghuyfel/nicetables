@@ -177,7 +177,11 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
           LayoutBuilder(
             builder: (context, constraints) {
               final narrow = constraints.maxWidth < 640;
-              final leading = selecting ? _bulkBar(context) : _titleBlock();
+              // While rows are selected the bulk bar takes the whole width,
+              // like a mail client's selection bar, so its actions never
+              // compete with search and buttons for space.
+              if (selecting) return _bulkBar(context);
+              final leading = _titleBlock();
               final trailing = _trailing(narrow);
               if (narrow) {
                 return Column(
@@ -289,46 +293,69 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
         all.length > widget.pageKeys.length;
     final actions = widget.bulkActions?.call(context, widget.selectedRows) ??
         const <Widget>[];
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.only(left: 4, right: 4),
-      decoration: BoxDecoration(
-        color: theme.selected,
-        borderRadius: BorderRadius.circular(10),
+    // Buttons inside keep their 40 px visual size but drop the padded 48 px
+    // tap target, which would otherwise overflow this 40 px bar.
+    return Theme(
+      data: Theme.of(context).copyWith(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: Row(
-        children: [
-          IconButton(
-            tooltip: 'Clear selection',
-            iconSize: 18,
-            visualDensity: VisualDensity.compact,
-            color: theme.accent,
-            onPressed: c.clearSelection,
-            icon: const Icon(Icons.close_rounded),
-          ),
-          Text(
-            '${NiceFormat.number(count)} selected',
-            style: theme.cellTextStyle.copyWith(
-              fontWeight: FontWeight.w600,
+      child: Container(
+        height: 40,
+        padding: const EdgeInsets.only(left: 4, right: 4),
+        decoration: BoxDecoration(
+          color: theme.selected,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              tooltip: 'Clear selection',
+              iconSize: 18,
+              visualDensity: VisualDensity.compact,
               color: theme.accent,
-              fontFeatures: const [FontFeature.tabularFigures()],
+              onPressed: c.clearSelection,
+              icon: const Icon(Icons.close_rounded),
             ),
-          ),
-          if (canSelectAll) ...[
-            const SizedBox(width: 8),
-            TextButton(
-              onPressed: () => c.selectAll(all),
-              style: TextButton.styleFrom(
-                foregroundColor: theme.accent,
-                visualDensity: VisualDensity.compact,
+            Text(
+              '${NiceFormat.number(count)} selected',
+              style: theme.cellTextStyle.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.accent,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
-              child: Text('Select all ${NiceFormat.number(all.length)}'),
+            ),
+            if (canSelectAll) ...[
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: () => c.selectAll(all),
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.accent,
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: Text('Select all ${NiceFormat.number(all.length)}'),
+              ),
+            ],
+            const SizedBox(width: 8),
+            // Scrolls sideways rather than overflowing on very narrow
+            // widths; the scroll is invisible when everything fits.
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                reverse: true,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final a in actions)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: a,
+                      ),
+                  ],
+                ),
+              ),
             ),
           ],
-          const Spacer(),
-          for (final a in actions)
-            Padding(padding: const EdgeInsets.only(left: 4), child: a),
-        ],
+        ),
       ),
     );
   }
@@ -355,8 +382,7 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
     }
 
     final iconColor = theme.mutedForeground;
-    if (widget.showColumnPicker &&
-        widget.columns.any((col) => col.hideable)) {
+    if (widget.showColumnPicker && widget.columns.any((col) => col.hideable)) {
       items
         ..add(const SizedBox(width: 4))
         ..add(

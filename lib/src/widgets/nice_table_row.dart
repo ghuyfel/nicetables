@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../cells/nice_cells.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
 import '../theme/nice_table_theme.dart';
@@ -192,10 +193,13 @@ class _NiceTableRowState<T> extends State<NiceTableRow<T>> {
                   activeColor: theme.accent,
                   checkColor: theme.onAccent,
                   side: BorderSide(color: theme.mutedForeground, width: 1.5),
+                  // 32 px: fits every density, including 40 px compact rows.
                   visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   semanticLabel: 'Select row ${widget.index + 1}',
-                  onChanged:
-                      widget.onCheckbox == null ? null : (_) => widget.onCheckbox!(),
+                  onChanged: widget.onCheckbox == null
+                      ? null
+                      : (_) => widget.onCheckbox!(),
                 ),
               ),
             ),
@@ -206,10 +210,7 @@ class _NiceTableRowState<T> extends State<NiceTableRow<T>> {
                 child: IconButton(
                   tooltip: widget.expanded ? 'Collapse' : 'Expand',
                   iconSize: 20,
-                  visualDensity: VisualDensity.compact,
-                  constraints:
-                      const BoxConstraints.tightFor(width: 32, height: 32),
-                  padding: EdgeInsets.zero,
+                  style: niceSmallIconButtonStyle,
                   color: theme.mutedForeground,
                   onPressed: widget.onToggleExpand,
                   icon: AnimatedRotation(
@@ -288,7 +289,8 @@ class _NiceTableRowState<T> extends State<NiceTableRow<T>> {
                         : Colors.transparent,
                   ),
                   left: BorderSide(
-                    color: widget.focused ? theme.focusRing : Colors.transparent,
+                    color:
+                        widget.focused ? theme.focusRing : Colors.transparent,
                     width: 2,
                   ),
                 ),

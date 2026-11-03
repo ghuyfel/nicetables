@@ -301,8 +301,9 @@ class NiceTableController<T> extends ChangeNotifier {
   Set<String> get hiddenColumns => Set.unmodifiable(_hidden);
 
   /// Whether [columnId] is visible, given the column's own default.
-  bool isColumnVisible(NiceColumn<T> column) =>
-      column.visible ? !_hidden.contains(column.id) : _shown.contains(column.id);
+  bool isColumnVisible(NiceColumn<T> column) => column.visible
+      ? !_hidden.contains(column.id)
+      : _shown.contains(column.id);
   final Set<String> _shown = {};
 
   /// Shows or hides [column].
@@ -321,8 +322,10 @@ class NiceTableController<T> extends ChangeNotifier {
       setColumnVisible(column, !isColumnVisible(column));
 
   /// The visible subset of [columns], in order.
-  List<NiceColumn<T>> visibleColumns(List<NiceColumn<T>> columns) =>
-      [for (final c in columns) if (isColumnVisible(c)) c];
+  List<NiceColumn<T>> visibleColumns(List<NiceColumn<T>> columns) => [
+        for (final c in columns)
+          if (isColumnVisible(c)) c
+      ];
 
   /// User-resized column widths in px, keyed by column id.
   Map<String, double> get columnWidths => Map.unmodifiable(_widths);

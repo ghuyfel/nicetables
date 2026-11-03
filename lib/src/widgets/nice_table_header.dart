@@ -96,7 +96,9 @@ class NiceTableHeader<T> extends StatelessWidget {
                   activeColor: theme.accent,
                   checkColor: theme.onAccent,
                   side: BorderSide(color: theme.mutedForeground, width: 1.5),
+                  // 32 px: fits the 36 px compact header.
                   visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   semanticLabel: 'Select all rows on this page',
                   onChanged: (_) => onSelectAll(selectAllState != true),
                 ),
@@ -118,8 +120,7 @@ class NiceTableHeader<T> extends StatelessWidget {
           SizedBox(width: theme.horizontalPadding),
           gutter,
           ...cells.take(pinned),
-          if (pinned > 0)
-            _PinnedEdge(offset: offset, theme: theme),
+          if (pinned > 0) _PinnedEdge(offset: offset, theme: theme),
           Expanded(
             child: NiceHorizontalShift(
               offset: offset,

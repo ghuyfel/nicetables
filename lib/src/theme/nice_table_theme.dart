@@ -15,7 +15,8 @@ class NiceStatusColors {
   final Color background;
 
   /// Interpolates between two pairs.
-  static NiceStatusColors lerp(NiceStatusColors a, NiceStatusColors b, double t) =>
+  static NiceStatusColors lerp(
+          NiceStatusColors a, NiceStatusColors b, double t) =>
       NiceStatusColors(
         foreground: Color.lerp(a.foreground, b.foreground, t)!,
         background: Color.lerp(a.background, b.background, t)!,
@@ -413,9 +414,12 @@ class NiceTableTheme extends ThemeExtension<NiceTableTheme> {
     if (other is! NiceTableTheme) return this;
     return NiceTableTheme(
       surface: Color.lerp(surface, other.surface, t)!,
-      headerBackground: Color.lerp(headerBackground, other.headerBackground, t)!,
-      headerForeground: Color.lerp(headerForeground, other.headerForeground, t)!,
-      headerTextStyle: TextStyle.lerp(headerTextStyle, other.headerTextStyle, t)!,
+      headerBackground:
+          Color.lerp(headerBackground, other.headerBackground, t)!,
+      headerForeground:
+          Color.lerp(headerForeground, other.headerForeground, t)!,
+      headerTextStyle:
+          TextStyle.lerp(headerTextStyle, other.headerTextStyle, t)!,
       cellTextStyle: TextStyle.lerp(cellTextStyle, other.cellTextStyle, t)!,
       subtitleTextStyle:
           TextStyle.lerp(subtitleTextStyle, other.subtitleTextStyle, t)!,
@@ -432,7 +436,8 @@ class NiceTableTheme extends ThemeExtension<NiceTableTheme> {
       border: Color.lerp(border, other.border, t)!,
       focusRing: Color.lerp(focusRing, other.focusRing, t)!,
       skeleton: Color.lerp(skeleton, other.skeleton, t)!,
-      statusPalette: NiceStatusPalette.lerp(statusPalette, other.statusPalette, t),
+      statusPalette:
+          NiceStatusPalette.lerp(statusPalette, other.statusPalette, t),
       borderRadius: BorderRadius.lerp(borderRadius, other.borderRadius, t)!,
       showBorder: t < 0.5 ? showBorder : other.showBorder,
       showStripes: t < 0.5 ? showStripes : other.showStripes,
@@ -462,9 +467,8 @@ class NiceTableThemeScope extends InheritedWidget {
   final NiceTableTheme theme;
 
   /// The nearest scoped theme, if any.
-  static NiceTableTheme? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<NiceTableThemeScope>()
-      ?.theme;
+  static NiceTableTheme? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<NiceTableThemeScope>()?.theme;
 
   @override
   bool updateShouldNotify(NiceTableThemeScope oldWidget) =>
