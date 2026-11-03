@@ -1,0 +1,28 @@
+name: nicetables
+description: >-
+  Beautiful, feature-complete data tables for Flutter: sorting, search,
+  filters, pagination, selection, pinned columns, resizable columns,
+  keyboard navigation, status chips, skeleton loading, CSV export and a
+  responsive card layout, all theme-aware with gorgeous defaults.
+version: 0.1.0
+repository: https://github.com/ghuyfel/nicetables
+topics:
+  - table
+  - datatable
+  - grid
+  - ui
+  - widgets
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.18.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
