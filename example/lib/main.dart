@@ -86,25 +86,64 @@ class Transaction {
   final bool verified;
 
   NiceStatusValue get statusValue => switch (status) {
-        TxStatus.approved => const NiceStatusValue('Approved', NiceStatus.success),
-        TxStatus.pending => const NiceStatusValue('Pending', NiceStatus.warning),
-        TxStatus.rejected => const NiceStatusValue('Rejected', NiceStatus.error),
+        TxStatus.approved =>
+          const NiceStatusValue('Approved', NiceStatus.success),
+        TxStatus.pending =>
+          const NiceStatusValue('Pending', NiceStatus.warning),
+        TxStatus.rejected =>
+          const NiceStatusValue('Rejected', NiceStatus.error),
         TxStatus.processing =>
           const NiceStatusValue('Processing', NiceStatus.info),
-        TxStatus.archived => const NiceStatusValue('Archived', NiceStatus.neutral),
+        TxStatus.archived =>
+          const NiceStatusValue('Archived', NiceStatus.neutral),
       };
 }
 
 List<Transaction> generateTransactions(int count, {int seed = 7}) {
   final rnd = Random(seed);
   const first = [
-    'Amara', 'Bruno', 'Chloé', 'Dmitri', 'Esther', 'Farid', 'Grace', 'Hugo',
-    'Imani', 'Jonas', 'Keiko', 'Luca', 'Maya', 'Noah', 'Olivia', 'Pavel',
-    'Quinn', 'Rosa', 'Samir', 'Tove', 'Uma', 'Viktor', 'Wren', 'Yara', 'Zane',
+    'Amara',
+    'Bruno',
+    'Chloé',
+    'Dmitri',
+    'Esther',
+    'Farid',
+    'Grace',
+    'Hugo',
+    'Imani',
+    'Jonas',
+    'Keiko',
+    'Luca',
+    'Maya',
+    'Noah',
+    'Olivia',
+    'Pavel',
+    'Quinn',
+    'Rosa',
+    'Samir',
+    'Tove',
+    'Uma',
+    'Viktor',
+    'Wren',
+    'Yara',
+    'Zane',
   ];
   const last = [
-    'Okafor', 'Silva', 'Martin', 'Volkov', 'Cohen', 'Haddad', 'Nakamura',
-    'Rossi', 'Mensah', 'Berg', 'Dubois', 'Khan', 'Novak', 'Osei', 'Petrov',
+    'Okafor',
+    'Silva',
+    'Martin',
+    'Volkov',
+    'Cohen',
+    'Haddad',
+    'Nakamura',
+    'Rossi',
+    'Mensah',
+    'Berg',
+    'Dubois',
+    'Khan',
+    'Novak',
+    'Osei',
+    'Petrov',
   ];
   const assets = ['BTC', 'ETH', 'USDC', 'SOL', 'XRP', 'ADA'];
   final now = DateTime(2026, 11, 3, 14, 30);
@@ -138,7 +177,8 @@ List<Transaction> generateTransactions(int count, {int seed = 7}) {
 // ---------------------------------------------------------------------------
 
 class GalleryPage extends StatefulWidget {
-  const GalleryPage({required this.mode, required this.onToggleMode, super.key});
+  const GalleryPage(
+      {required this.mode, required this.onToggleMode, super.key});
 
   final ThemeMode mode;
   final VoidCallback onToggleMode;
@@ -176,7 +216,8 @@ class _GalleryPageState extends State<GalleryPage> {
         NiceColumn.custom(
           'customer',
           'Customer',
-          (context, t, _) => NiceAvatarCell(name: t.customer, subtitle: t.email),
+          (context, t, _) =>
+              NiceAvatarCell(name: t.customer, subtitle: t.email),
           value: (t) => t.customer,
           width: const NiceColumnWidth.flex(2, min: 200),
         ),
@@ -190,7 +231,7 @@ class _GalleryPageState extends State<GalleryPage> {
           'asset',
           'Asset',
           (t) => t.asset,
-          width: const NiceColumnWidth.fixed(104),
+          width: const NiceColumnWidth.fixed(112),
           filterOptions: const [],
         ),
         NiceColumn.money('amount', 'Amount', (t) => t.amount),
@@ -234,7 +275,7 @@ class _GalleryPageState extends State<GalleryPage> {
               ),
             ],
           ),
-          width: 80,
+          width: 88,
         ),
       ];
 
@@ -256,65 +297,80 @@ class _GalleryPageState extends State<GalleryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
+              // Wraps onto two lines on narrow windows instead of overflowing.
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                runSpacing: 8,
                 children: [
-                  Text(
-                    'nicetables',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.5,
-                        ),
-                  ),
-                  const SizedBox(width: 20),
-                  SegmentedButton<int>(
-                    segments: const [
-                      ButtonSegment(value: 0, label: Text('Transactions')),
-                      ButtonSegment(value: 1, label: Text('Server-side')),
-                      ButtonSegment(value: 2, label: Text('Cards')),
-                    ],
-                    selected: {_tab},
-                    showSelectedIcon: false,
-                    style: const ButtonStyle(
-                      visualDensity: VisualDensity.compact,
-                    ),
-                    onSelectionChanged: (s) => setState(() => _tab = s.first),
-                  ),
-                  const Spacer(),
-                  if (_tab == 0) ...[
-                    _Toggle(
-                      label: 'Stripes',
-                      value: _stripes,
-                      onChanged: (v) => setState(() => _stripes = v),
-                    ),
-                    _Toggle(
-                      label: 'Pinned',
-                      value: _pinned,
-                      onChanged: (v) => setState(() => _pinned = v),
-                    ),
-                    _Toggle(
-                      label: 'Expandable',
-                      value: _expandable,
-                      onChanged: (v) => setState(() => _expandable = v),
-                    ),
-                    _Toggle(
-                      label: 'Multi-select',
-                      value: _selection == NiceSelectionMode.multi,
-                      onChanged: (v) => setState(
-                        () => _selection = v
-                            ? NiceSelectionMode.multi
-                            : NiceSelectionMode.single,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'nicetables',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.5,
+                                ),
                       ),
-                    ),
-                  ],
-                  IconButton(
-                    tooltip: 'Toggle dark mode',
-                    onPressed: widget.onToggleMode,
-                    icon: Icon(
-                      widget.mode == ThemeMode.dark
-                          ? Icons.light_mode_outlined
-                          : Icons.dark_mode_outlined,
-                      color: scheme.onSurfaceVariant,
-                    ),
+                      const SizedBox(width: 20),
+                      SegmentedButton<int>(
+                        segments: const [
+                          ButtonSegment(value: 0, label: Text('Transactions')),
+                          ButtonSegment(value: 1, label: Text('Server-side')),
+                          ButtonSegment(value: 2, label: Text('Cards')),
+                        ],
+                        selected: {_tab},
+                        showSelectedIcon: false,
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onSelectionChanged: (s) =>
+                            setState(() => _tab = s.first),
+                      ),
+                    ],
+                  ),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (_tab == 0) ...[
+                        _Toggle(
+                          label: 'Stripes',
+                          value: _stripes,
+                          onChanged: (v) => setState(() => _stripes = v),
+                        ),
+                        _Toggle(
+                          label: 'Pinned',
+                          value: _pinned,
+                          onChanged: (v) => setState(() => _pinned = v),
+                        ),
+                        _Toggle(
+                          label: 'Expandable',
+                          value: _expandable,
+                          onChanged: (v) => setState(() => _expandable = v),
+                        ),
+                        _Toggle(
+                          label: 'Multi-select',
+                          value: _selection == NiceSelectionMode.multi,
+                          onChanged: (v) => setState(
+                            () => _selection = v
+                                ? NiceSelectionMode.multi
+                                : NiceSelectionMode.single,
+                          ),
+                        ),
+                      ],
+                      IconButton(
+                        tooltip: 'Toggle dark mode',
+                        onPressed: widget.onToggleMode,
+                        icon: Icon(
+                          widget.mode == ThemeMode.dark
+                              ? Icons.light_mode_outlined
+                              : Icons.dark_mode_outlined,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

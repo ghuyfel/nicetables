@@ -331,11 +331,14 @@ class NiceColumn<T> {
 
   /// A trailing actions column: not sortable, not searchable, not exported,
   /// fixed width, hidden from the card layout's key/value list.
+  ///
+  /// Size [width] as 32 px per visible button plus 24 px of cell padding;
+  /// the default fits an inline button and the overflow menu.
   NiceColumn.actions(
     String id,
     NiceCellBuilder<T> cell, {
     String label = '',
-    double width = 56,
+    double width = 88,
     NiceAlign align = NiceAlign.end,
   }) : this(
           id: id,
@@ -455,8 +458,7 @@ class NiceColumn<T> {
   final TextStyle? style;
 
   /// Effective alignment: explicit, else end for numeric, else start.
-  NiceAlign get align =>
-      _align ?? (numeric ? NiceAlign.end : NiceAlign.start);
+  NiceAlign get align => _align ?? (numeric ? NiceAlign.end : NiceAlign.start);
 
   /// Whether the header toggles sorting.
   bool get sortable => _sortable ?? (value != null || comparator != null);

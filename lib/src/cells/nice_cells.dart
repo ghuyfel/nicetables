@@ -294,7 +294,8 @@ class _NiceCopyableTextState extends State<NiceCopyableText> {
   bool _copied = false;
 
   Future<void> _copy() async {
-    await Clipboard.setData(ClipboardData(text: widget.copyValue ?? widget.text));
+    await Clipboard.setData(
+        ClipboardData(text: widget.copyValue ?? widget.text));
     if (!mounted) return;
     setState(() => _copied = true);
     widget.onCopied?.call();
@@ -364,9 +365,8 @@ class NiceProgressCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = NiceTableTheme.of(context);
     final v = value.clamp(0.0, 1.0);
-    final color = v >= 1
-        ? theme.statusPalette.success.foreground
-        : theme.accent;
+    final color =
+        v >= 1 ? theme.statusPalette.success.foreground : theme.accent;
     return Row(
       children: [
         Expanded(
@@ -478,6 +478,16 @@ class NiceTrendCell extends StatelessWidget {
   }
 }
 
+/// A 32 px icon button style with no minimum tap target, so buttons fit
+/// inside every row density (Material's default 48 px minimum overflows
+/// 40 px compact rows).
+final ButtonStyle niceSmallIconButtonStyle = IconButton.styleFrom(
+  minimumSize: const Size(32, 32),
+  fixedSize: const Size(32, 32),
+  padding: EdgeInsets.zero,
+  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+);
+
 /// One action in a [NiceRowActions] menu.
 class NiceAction {
   /// Creates an action.
@@ -529,69 +539,72 @@ class NiceRowActions extends StatelessWidget {
     final inline = actions.take(inlineCount).where((a) => a.icon != null);
     final menu = actions.skip(inlineCount).toList();
     final errorColor = theme.statusPalette.error.foreground;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        for (final a in inline)
-          IconButton(
-            tooltip: a.label,
-            iconSize: 18,
-            visualDensity: VisualDensity.compact,
-            constraints: const BoxConstraints.tightFor(width: 32, height: 32),
-            padding: EdgeInsets.zero,
-            color: a.destructive ? errorColor : theme.mutedForeground,
-            onPressed: a.enabled ? a.onPressed : null,
-            icon: Icon(a.icon),
-          ),
-        if (menu.isNotEmpty)
-          PopupMenuButton<int>(
-            tooltip: 'More actions',
-            iconSize: 18,
-            iconColor: theme.mutedForeground,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 180),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: theme.border),
+    // Each button is 32 px wide; if the column is narrower than that, the
+    // buttons scale down rather than overflow.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerEnd,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          for (final a in inline)
+            IconButton(
+              tooltip: a.label,
+              iconSize: 18,
+              style: niceSmallIconButtonStyle,
+              color: a.destructive ? errorColor : theme.mutedForeground,
+              onPressed: a.enabled ? a.onPressed : null,
+              icon: Icon(a.icon),
             ),
-            onSelected: (i) => menu[i].onPressed(),
-            itemBuilder: (context) => [
-              for (var i = 0; i < menu.length; i++) ...[
-                if (menu[i].destructive &&
-                    i > 0 &&
-                    !menu[i - 1].destructive)
-                  const PopupMenuDivider(),
-                PopupMenuItem<int>(
-                  value: i,
-                  enabled: menu[i].enabled,
-                  height: 40,
-                  child: Row(
-                    children: [
-                      if (menu[i].icon != null) ...[
-                        Icon(
-                          menu[i].icon,
-                          size: 18,
-                          color: menu[i].destructive
-                              ? errorColor
-                              : theme.mutedForeground,
+          if (menu.isNotEmpty)
+            PopupMenuButton<int>(
+              tooltip: 'More actions',
+              iconSize: 18,
+              iconColor: theme.mutedForeground,
+              padding: EdgeInsets.zero,
+              style: niceSmallIconButtonStyle,
+              constraints: const BoxConstraints(minWidth: 180),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: theme.border),
+              ),
+              onSelected: (i) => menu[i].onPressed(),
+              itemBuilder: (context) => [
+                for (var i = 0; i < menu.length; i++) ...[
+                  if (menu[i].destructive && i > 0 && !menu[i - 1].destructive)
+                    const PopupMenuDivider(),
+                  PopupMenuItem<int>(
+                    value: i,
+                    enabled: menu[i].enabled,
+                    height: 40,
+                    child: Row(
+                      children: [
+                        if (menu[i].icon != null) ...[
+                          Icon(
+                            menu[i].icon,
+                            size: 18,
+                            color: menu[i].destructive
+                                ? errorColor
+                                : theme.mutedForeground,
+                          ),
+                          const SizedBox(width: 10),
+                        ],
+                        Text(
+                          menu[i].label,
+                          style: theme.cellTextStyle.copyWith(
+                            color: menu[i].destructive ? errorColor : null,
+                          ),
                         ),
-                        const SizedBox(width: 10),
                       ],
-                      Text(
-                        menu[i].label,
-                        style: theme.cellTextStyle.copyWith(
-                          color: menu[i].destructive ? errorColor : null,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
-            icon: const Icon(Icons.more_horiz_rounded),
-          ),
-      ],
+              icon: const Icon(Icons.more_horiz_rounded),
+            ),
+        ],
+      ),
     );
   }
 }

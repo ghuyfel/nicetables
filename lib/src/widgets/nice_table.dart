@@ -320,10 +320,12 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
   void _notifySelection() {
     final cb = widget.onSelectionChanged;
     if (cb == null) return;
-    final source = widget.processing == NiceProcessing.client
-        ? widget.rows
-        : _pageRows;
-    cb([for (final r in source) if (_controller.isSelected(_keyOf(r))) r]);
+    final source =
+        widget.processing == NiceProcessing.client ? widget.rows : _pageRows;
+    cb([
+      for (final r in source)
+        if (_controller.isSelected(_keyOf(r))) r
+    ]);
   }
 
   void _toggleRow(int index, {bool fromCheckbox = false}) {
@@ -484,9 +486,8 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
   List<NiceFilterOption> _filterOptionsFor(NiceColumn<T> column) {
     final explicit = column.filterOptions;
     if (explicit != null && explicit.isNotEmpty) return explicit;
-    final source = widget.processing == NiceProcessing.client
-        ? widget.rows
-        : _pageRows;
+    final source =
+        widget.processing == NiceProcessing.client ? widget.rows : _pageRows;
     final seen = <Object?, NiceFilterOption>{};
     for (final row in source) {
       final v = column.value?.call(row);
@@ -499,9 +500,8 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
   }
 
   void _export() {
-    final rows = widget.processing == NiceProcessing.client
-        ? _matchingRows
-        : _pageRows;
+    final rows =
+        widget.processing == NiceProcessing.client ? _matchingRows : _pageRows;
     final csv = NiceCsv.encode<T>(
       rows,
       _controller.visibleColumns(widget.columns),
@@ -576,8 +576,9 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
                   actions: widget.actions,
                   showColumnPicker: widget.showColumnPicker && !compact,
                   showDensityToggle: widget.showDensityToggle && !compact,
-                  onExport:
-                      widget.showExport || widget.onExport != null ? _export : null,
+                  onExport: widget.showExport || widget.onExport != null
+                      ? _export
+                      : null,
                   onRefresh: widget.onRefresh,
                   bulkActions: widget.bulkActions,
                   loading: widget.loading,
@@ -596,7 +597,8 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
 
           var body = compact
               ? _buildCards(theme, visibleColumns, bounded)
-              : _buildTable(context, theme, visibleColumns, constraints, bounded);
+              : _buildTable(
+                  context, theme, visibleColumns, constraints, bounded);
 
           if (widget.loading && _pageRows.isNotEmpty) {
             body = Stack(
@@ -634,7 +636,8 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
               decoration: BoxDecoration(
                 color: theme.surface,
                 borderRadius: theme.borderRadius,
-                border: theme.showBorder ? Border.all(color: theme.border) : null,
+                border:
+                    theme.showBorder ? Border.all(color: theme.border) : null,
                 boxShadow: theme.shadow,
               ),
               child: column,
@@ -668,7 +671,8 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
       theme: theme,
       selectionMode: widget.selectionMode,
       isSelected: (r) => c.isSelected(_keyOf(r)),
-      onToggleSelected: (r) => _toggleRow(_pageRows.indexOf(r), fromCheckbox: true),
+      onToggleSelected: (r) =>
+          _toggleRow(_pageRows.indexOf(r), fromCheckbox: true),
       onTap: widget.onRowTap == null && !_selectOnTap
           ? null
           : (r) => _onRowTap(_pageRows.indexOf(r)),
@@ -719,8 +723,9 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
     final c = _controller;
     final density = _density();
     final expandable = widget.expandedBuilder != null;
-    final leading = (widget.selectionMode == NiceSelectionMode.multi ? 48.0 : 0.0) +
-        (expandable ? 40.0 : 0.0);
+    final leading =
+        (widget.selectionMode == NiceSelectionMode.multi ? 48.0 : 0.0) +
+            (expandable ? 40.0 : 0.0);
     final available = constraints.maxWidth - 2 * theme.horizontalPadding;
     final layout = NiceColumnLayout.resolve<T>(
       columns: columns,

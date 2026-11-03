@@ -132,9 +132,8 @@ class _DefaultCard<T> extends StatelessWidget {
     final actions = columns.where((c) => !c.showInCard && c.cell != null);
     final rest = shown.where((c) => c != primary).toList();
 
-    Widget content(NiceColumn<T> c) =>
-        buildNiceCellContent<T>(context, c, row, cellContext, theme,
-            NiceDensity.comfortable);
+    Widget content(NiceColumn<T> c) => buildNiceCellContent<T>(
+        context, c, row, cellContext, theme, NiceDensity.comfortable);
 
     return Material(
       color: selected ? theme.selected : theme.surface,
@@ -143,9 +142,8 @@ class _DefaultCard<T> extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: onTap ??
             (selectionMode == NiceSelectionMode.none ? null : onToggleSelected),
-        onLongPress: selectionMode == NiceSelectionMode.multi
-            ? onToggleSelected
-            : null,
+        onLongPress:
+            selectionMode == NiceSelectionMode.multi ? onToggleSelected : null,
         child: Container(
           padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
           decoration: BoxDecoration(
