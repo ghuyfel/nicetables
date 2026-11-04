@@ -474,12 +474,22 @@ class _PageJumpState<T> extends State<_PageJump<T>> {
                 color: theme.foreground,
                 height: 1.2,
               ),
+              // Every border slot is set: the app's InputDecorationTheme
+              // may draw an outline for the slots `collapsed` leaves null,
+              // which would sit inside the box drawn above.
               decoration: InputDecoration.collapsed(
                 hintText: '${widget.controller.page + 1}',
                 hintStyle: widget.style.copyWith(
                   color: theme.mutedForeground.withValues(alpha: 0.5),
                   height: 1.2,
                 ),
+              ).copyWith(
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                filled: false,
               ),
             ),
           ),
