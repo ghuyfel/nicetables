@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'nice_filter.dart';
 import 'nice_format.dart';
 import 'nice_status.dart';
+import 'nice_table_strings.dart';
 
 /// Horizontal alignment of a cell's content.
 enum NiceAlign {
@@ -469,15 +470,19 @@ class NiceColumn<T> {
   /// Whether a filter menu is shown in the header.
   bool get filterable => filterOptions != null;
 
-  /// Display text for [row].
-  String displayText(T row) {
+  /// Display text for [row]; booleans read [NiceTableStrings.yes] and
+  /// [NiceTableStrings.no] from [strings] (English by default).
+  String displayText(
+    T row, {
+    NiceTableStrings strings = const NiceTableStrings(),
+  }) {
     if (text != null) return text!(row);
     final v = value?.call(row);
     return switch (v) {
       null => '',
       final num n => NiceFormat.number(n),
       final DateTime d => NiceFormat.dateTime(d),
-      final bool b => b ? 'Yes' : 'No',
+      final bool b => b ? strings.yes : strings.no,
       _ => v.toString(),
     };
   }

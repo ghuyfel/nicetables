@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../model/nice_density.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 
 /// Shown when a table has no rows to display.
@@ -8,7 +9,7 @@ class NiceEmptyState extends StatelessWidget {
   /// Creates an empty state.
   const NiceEmptyState({
     this.icon = Icons.inbox_outlined,
-    this.title = 'Nothing here yet',
+    this.title,
     this.message,
     this.action,
     super.key,
@@ -17,8 +18,8 @@ class NiceEmptyState extends StatelessWidget {
   /// Leading icon.
   final IconData icon;
 
-  /// Short headline.
-  final String title;
+  /// Short headline; defaults to [NiceTableStrings.emptyTitle].
+  final String? title;
 
   /// Optional supporting sentence.
   final String? message;
@@ -46,7 +47,7 @@ class NiceEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              title,
+              title ?? NiceTableStrings.of(context).emptyTitle,
               textAlign: TextAlign.center,
               style: theme.cellTextStyle.copyWith(
                 fontSize: 15,
@@ -81,13 +82,13 @@ class NiceErrorState extends StatelessWidget {
   /// Creates an error state.
   const NiceErrorState({
     required this.message,
-    this.title = 'Could not load data',
+    this.title,
     this.onRetry,
     super.key,
   });
 
-  /// Headline.
-  final String title;
+  /// Headline; defaults to [NiceTableStrings.errorTitle].
+  final String? title;
 
   /// What went wrong, in user terms.
   final String message;
@@ -98,16 +99,17 @@ class NiceErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = NiceTableTheme.of(context);
+    final strings = NiceTableStrings.of(context);
     return NiceEmptyState(
       icon: Icons.error_outline_rounded,
-      title: title,
+      title: title ?? strings.errorTitle,
       message: message,
       action: onRetry == null
           ? null
           : FilledButton.tonalIcon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('Retry'),
+              label: Text(strings.retry),
               style: FilledButton.styleFrom(
                 foregroundColor: theme.statusPalette.error.foreground,
                 backgroundColor: theme.statusPalette.error.background,
@@ -162,7 +164,7 @@ class _NiceSkeletonRowsState extends State<NiceSkeletonRows>
     final theme = NiceTableTheme.of(context);
     final reduceMotion = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     return Semantics(
-      label: 'Loading',
+      label: NiceTableStrings.of(context).loading,
       child: AnimatedBuilder(
         animation: _pulse,
         builder: (context, _) {

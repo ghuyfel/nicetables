@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../model/nice_status.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 
 /// A soft, pill-shaped status chip: a coloured dot and label on a tinted
@@ -327,7 +328,9 @@ class _NiceCopyableTextState extends State<NiceCopyableText> {
             duration: theme.hoverDuration,
             opacity: visible ? 1 : 0,
             child: Tooltip(
-              message: _copied ? 'Copied' : 'Copy',
+              message: _copied
+                  ? NiceTableStrings.of(context).copied
+                  : NiceTableStrings.of(context).copy,
               child: InkWell(
                 borderRadius: BorderRadius.circular(6),
                 onTap: visible ? _copy : null,
@@ -559,7 +562,7 @@ class NiceRowActions extends StatelessWidget {
             ),
           if (menu.isNotEmpty)
             PopupMenuButton<int>(
-              tooltip: 'More actions',
+              tooltip: NiceTableStrings.of(context).moreActions,
               iconSize: 18,
               iconColor: theme.mutedForeground,
               padding: EdgeInsets.zero,

@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import '../cells/nice_cells.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 import 'nice_default_cell.dart';
 import 'nice_horizontal_scroll.dart';
@@ -208,7 +209,9 @@ class _NiceTableRowState<T> extends State<NiceTableRow<T>> {
               width: 40,
               child: Center(
                 child: IconButton(
-                  tooltip: widget.expanded ? 'Collapse' : 'Expand',
+                  tooltip: widget.expanded
+                      ? NiceTableStrings.of(context).collapse
+                      : NiceTableStrings.of(context).expand,
                   iconSize: 20,
                   style: niceSmallIconButtonStyle,
                   color: theme.mutedForeground,

@@ -4,6 +4,7 @@ import '../cells/nice_cells.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
 import '../model/nice_status.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 
 /// Builds the content of a cell for [column] and [row].
@@ -31,6 +32,7 @@ Widget buildNiceCellContent<T>(
       ),
     );
   }
+  final strings = NiceTableStrings.of(context);
   if (value is bool) {
     return Align(
       alignment: column.align.alignment,
@@ -40,12 +42,12 @@ Widget buildNiceCellContent<T>(
         color: value
             ? theme.statusPalette.success.foreground
             : theme.mutedForeground.withValues(alpha: 0.5),
-        semanticLabel: value ? 'Yes' : 'No',
+        semanticLabel: value ? strings.yes : strings.no,
       ),
     );
   }
 
-  final text = column.displayText(row);
+  final text = column.displayText(row, strings: strings);
   var style = column.mono ? theme.monoTextStyle : theme.cellTextStyle;
   if (column.numeric) {
     style = style.copyWith(

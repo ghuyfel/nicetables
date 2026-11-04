@@ -5,6 +5,7 @@ import '../controller/nice_table_controller.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
 import '../model/nice_filter.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 import 'nice_horizontal_scroll.dart';
 import 'nice_layout.dart';
@@ -99,7 +100,7 @@ class NiceTableHeader<T> extends StatelessWidget {
                   // 32 px: fits the 36 px compact header.
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  semanticLabel: 'Select all rows on this page',
+                  semanticLabel: NiceTableStrings.of(context).selectAllOnPage,
                   onChanged: (_) => onSelectAll(selectAllState != true),
                 ),
               ),
@@ -199,6 +200,7 @@ class _HeaderCellState<T> extends State<_HeaderCell<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = NiceTableStrings.of(context);
     final column = widget.column;
     final theme = widget.theme;
     final sort = widget.controller.sort;
@@ -269,8 +271,8 @@ class _HeaderCellState<T> extends State<_HeaderCell<T>> {
       cell = Semantics(
         button: true,
         label: sorted
-            ? '${column.label}, sorted ${sort!.ascending ? 'ascending' : 'descending'}'
-            : '${column.label}, sort',
+            ? '${column.label}, ${sort!.ascending ? strings.sortedAscending : strings.sortedDescending}'
+            : '${column.label}, ${strings.sort}',
         child: InkWell(
           onTap: () => widget.controller.toggleSort(column.id),
           hoverColor: theme.hover,
@@ -423,7 +425,7 @@ class _FilterMenu<T> extends StatelessWidget {
               color: theme.mutedForeground,
             ),
             child: Text(
-              'Clear filter',
+              NiceTableStrings.of(context).clearFilter,
               style: theme.cellTextStyle.copyWith(color: theme.mutedForeground),
             ),
           ),

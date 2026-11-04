@@ -10,6 +10,7 @@ import '../model/nice_column.dart';
 import '../model/nice_density.dart';
 import '../model/nice_filter.dart';
 import '../model/nice_query.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 import 'nice_card_list.dart';
 import 'nice_horizontal_scroll.dart';
@@ -73,7 +74,7 @@ class NiceTable<T> extends StatefulWidget {
     this.titleWidget,
     this.showToolbar = true,
     this.showSearch = true,
-    this.searchHint = 'Search',
+    this.searchHint,
     this.actions = const [],
     this.showColumnPicker = true,
     this.showDensityToggle = false,
@@ -97,12 +98,13 @@ class NiceTable<T> extends StatefulWidget {
     this.showPageJump = true,
     this.density,
     this.theme,
+    this.strings,
     this.compactBreakpoint = 600,
     this.cardBuilder,
     this.emptyState,
-    this.emptyTitle = 'Nothing here yet',
+    this.emptyTitle,
     this.emptyMessage,
-    this.rowLabel = 'rows',
+    this.rowLabel,
     this.semanticLabel,
     super.key,
   }) : assert(pinnedColumns >= 0, 'pinnedColumns must not be negative');
@@ -154,8 +156,8 @@ class NiceTable<T> extends StatefulWidget {
   /// Whether the search field is shown.
   final bool showSearch;
 
-  /// Search placeholder.
-  final String searchHint;
+  /// Search placeholder; defaults to [NiceTableStrings.search].
+  final String? searchHint;
 
   /// Trailing toolbar widgets.
   final List<Widget> actions;
@@ -227,6 +229,10 @@ class NiceTable<T> extends StatefulWidget {
   /// Theme override.
   final NiceTableTheme? theme;
 
+  /// The text the table draws itself; defaults to the nearest
+  /// [NiceTableStringsScope], else English.
+  final NiceTableStrings? strings;
+
   /// Below this width the card layout is used. Zero disables it.
   final double compactBreakpoint;
 
@@ -236,14 +242,16 @@ class NiceTable<T> extends StatefulWidget {
   /// Replaces the default empty state.
   final Widget? emptyState;
 
-  /// Empty-state title when there are no rows at all.
-  final String emptyTitle;
+  /// Empty-state title when there are no rows at all; defaults to
+  /// [NiceTableStrings.emptyTitle].
+  final String? emptyTitle;
 
   /// Empty-state message when there are no rows at all.
   final String? emptyMessage;
 
-  /// Noun for counts ("rows", "orders").
-  final String rowLabel;
+  /// Noun for counts ("rows", "orders"); defaults to
+  /// [NiceTableStrings.rows].
+  final String? rowLabel;
 
   /// Accessibility label for the table.
   final String? semanticLabel;
@@ -515,9 +523,10 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
     } else {
       Clipboard.setData(ClipboardData(text: csv));
       final messenger = ScaffoldMessenger.maybeOf(context);
+      final strings = _strings();
       messenger?.showSnackBar(
         SnackBar(
-          content: Text('Copied ${rows.length} ${widget.rowLabel} as CSV'),
+          content: Text(strings.copiedAsCsv(rows.length, _rowLabel(strings))),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -528,9 +537,15 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
   // Build
   // -------------------------------------------------------------------
 
+  NiceTableStrings _strings() => widget.strings ?? NiceTableStrings.of(context);
+
+  String _rowLabel(NiceTableStrings strings) => widget.rowLabel ?? strings.rows;
+
   @override
   Widget build(BuildContext context) {
     final theme = _theme();
+    final strings = _strings();
+    final rowLabel = _rowLabel(strings);
     final c = _controller;
 
     // Resolve the page.
@@ -553,102 +568,105 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
         if (c.isSelected(_keyOf(r))) r,
     ];
 
-    return NiceTableThemeScope(
-      theme: theme,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final bounded = constraints.hasBoundedHeight;
-          final compact = widget.compactBreakpoint > 0 &&
-              constraints.maxWidth < widget.compactBreakpoint;
+    return NiceTableStringsScope(
+      strings: strings,
+      child: NiceTableThemeScope(
+        theme: theme,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bounded = constraints.hasBoundedHeight;
+            final compact = widget.compactBreakpoint > 0 &&
+                constraints.maxWidth < widget.compactBreakpoint;
 
-          final toolbar = widget.showToolbar
-              ? NiceTableToolbar<T>(
-                  controller: c,
-                  columns: widget.columns,
-                  theme: theme,
-                  totalRows: c.totalRows,
-                  selectedRows: selectedRows,
-                  pageKeys: _pageRows.map(_keyOf).toList(),
-                  allMatchingKeys: widget.processing == NiceProcessing.client
-                      ? _matchingRows.map(_keyOf).toList()
-                      : null,
-                  title: widget.title,
-                  subtitle: widget.subtitle,
-                  titleWidget: widget.titleWidget,
-                  showSearch: widget.showSearch,
-                  searchHint: widget.searchHint,
-                  actions: widget.actions,
-                  showColumnPicker: widget.showColumnPicker && !compact,
-                  showDensityToggle: widget.showDensityToggle && !compact,
-                  onExport: widget.showExport || widget.onExport != null
-                      ? _export
-                      : null,
-                  onRefresh: widget.onRefresh,
-                  bulkActions: widget.bulkActions,
-                  loading: widget.loading,
-                  rowLabel: widget.rowLabel,
-                )
-              : null;
+            final toolbar = widget.showToolbar
+                ? NiceTableToolbar<T>(
+                    controller: c,
+                    columns: widget.columns,
+                    theme: theme,
+                    totalRows: c.totalRows,
+                    selectedRows: selectedRows,
+                    pageKeys: _pageRows.map(_keyOf).toList(),
+                    allMatchingKeys: widget.processing == NiceProcessing.client
+                        ? _matchingRows.map(_keyOf).toList()
+                        : null,
+                    title: widget.title,
+                    subtitle: widget.subtitle,
+                    titleWidget: widget.titleWidget,
+                    showSearch: widget.showSearch,
+                    searchHint: widget.searchHint ?? strings.search,
+                    actions: widget.actions,
+                    showColumnPicker: widget.showColumnPicker && !compact,
+                    showDensityToggle: widget.showDensityToggle && !compact,
+                    onExport: widget.showExport || widget.onExport != null
+                        ? _export
+                        : null,
+                    onRefresh: widget.onRefresh,
+                    bulkActions: widget.bulkActions,
+                    loading: widget.loading,
+                    rowLabel: rowLabel,
+                  )
+                : null;
 
-          final footer = widget.showFooter
-              ? NiceTableFooter<T>(
-                  controller: c,
-                  pageSizeOptions: widget.pageSizeOptions,
-                  paged: widget.paged,
-                  rowLabel: widget.rowLabel,
-                  showPageJump: widget.showPageJump,
-                )
-              : null;
+            final footer = widget.showFooter
+                ? NiceTableFooter<T>(
+                    controller: c,
+                    pageSizeOptions: widget.pageSizeOptions,
+                    paged: widget.paged,
+                    rowLabel: rowLabel,
+                    showPageJump: widget.showPageJump,
+                  )
+                : null;
 
-          var body = compact
-              ? _buildCards(theme, visibleColumns, bounded)
-              : _buildTable(
-                  context, theme, visibleColumns, constraints, bounded);
+            var body = compact
+                ? _buildCards(theme, visibleColumns, bounded)
+                : _buildTable(
+                    context, theme, visibleColumns, constraints, bounded);
 
-          if (widget.loading && _pageRows.isNotEmpty) {
-            body = Stack(
-              children: [
-                body,
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: LinearProgressIndicator(
-                    minHeight: 2,
-                    backgroundColor: Colors.transparent,
-                    color: theme.accent,
+            if (widget.loading && _pageRows.isNotEmpty) {
+              body = Stack(
+                children: [
+                  body,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    child: LinearProgressIndicator(
+                      minHeight: 2,
+                      backgroundColor: Colors.transparent,
+                      color: theme.accent,
+                    ),
                   ),
-                ),
+                ],
+              );
+            }
+
+            final column = Column(
+              mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (toolbar != null) toolbar,
+                if (bounded) Expanded(child: body) else body,
+                if (footer != null) footer,
               ],
             );
-          }
 
-          final column = Column(
-            mainAxisSize: bounded ? MainAxisSize.max : MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (toolbar != null) toolbar,
-              if (bounded) Expanded(child: body) else body,
-              if (footer != null) footer,
-            ],
-          );
-
-          return Semantics(
-            label: widget.semanticLabel ?? widget.title,
-            container: true,
-            child: Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: theme.surface,
-                borderRadius: theme.borderRadius,
-                border:
-                    theme.showBorder ? Border.all(color: theme.border) : null,
-                boxShadow: theme.shadow,
+            return Semantics(
+              label: widget.semanticLabel ?? widget.title,
+              container: true,
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: theme.surface,
+                  borderRadius: theme.borderRadius,
+                  border:
+                      theme.showBorder ? Border.all(color: theme.border) : null,
+                  boxShadow: theme.shadow,
+                ),
+                child: column,
               ),
-              child: column,
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -691,6 +709,7 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
   /// Error, skeleton or empty state, or null when rows should render.
   Widget? _stateWidget(NiceTableTheme theme) {
     if (_pageRows.isNotEmpty) return null;
+    final strings = _strings();
     if (widget.error != null) {
       return NiceErrorState(
         message: widget.error.toString(),
@@ -703,17 +722,17 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
     if (c.query.hasCriteria) {
       return NiceEmptyState(
         icon: Icons.search_off_rounded,
-        title: 'No matching ${widget.rowLabel}',
-        message: 'Try a different search or remove some filters.',
+        title: strings.noMatchTitle(_rowLabel(strings)),
+        message: strings.noMatchMessage,
         action: TextButton.icon(
           onPressed: c.clearFilters,
           icon: const Icon(Icons.filter_alt_off_outlined, size: 18),
-          label: const Text('Clear filters'),
+          label: Text(strings.clearFilters),
         ),
       );
     }
     return NiceEmptyState(
-      title: widget.emptyTitle,
+      title: widget.emptyTitle ?? strings.emptyTitle,
       message: widget.emptyMessage,
     );
   }

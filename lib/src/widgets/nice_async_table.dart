@@ -4,6 +4,7 @@ import '../controller/nice_table_controller.dart';
 import '../model/nice_column.dart';
 import '../model/nice_density.dart';
 import '../model/nice_query.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 import 'nice_card_list.dart';
 import 'nice_table.dart';
@@ -57,7 +58,7 @@ class NiceAsyncTable<T> extends StatefulWidget {
     this.titleWidget,
     this.showToolbar = true,
     this.showSearch = true,
-    this.searchHint = 'Search',
+    this.searchHint,
     this.actions = const [],
     this.showColumnPicker = true,
     this.showDensityToggle = false,
@@ -83,10 +84,11 @@ class NiceAsyncTable<T> extends StatefulWidget {
     this.compactBreakpoint = 600,
     this.cardBuilder,
     this.emptyState,
-    this.emptyTitle = 'Nothing here yet',
+    this.emptyTitle,
     this.emptyMessage,
-    this.rowLabel = 'rows',
+    this.rowLabel,
     this.semanticLabel,
+    this.strings,
     super.key,
   });
 
@@ -118,7 +120,7 @@ class NiceAsyncTable<T> extends StatefulWidget {
   final bool showSearch;
 
   /// Search placeholder.
-  final String searchHint;
+  final String? searchHint;
 
   /// Trailing toolbar widgets.
   final List<Widget> actions;
@@ -196,13 +198,16 @@ class NiceAsyncTable<T> extends StatefulWidget {
   final Widget? emptyState;
 
   /// Empty title.
-  final String emptyTitle;
+  final String? emptyTitle;
 
   /// Empty message.
   final String? emptyMessage;
 
   /// Noun for counts.
-  final String rowLabel;
+  final String? rowLabel;
+
+  /// The text the table draws itself; see [NiceTable.strings].
+  final NiceTableStrings? strings;
 
   /// Accessibility label.
   final String? semanticLabel;
@@ -298,6 +303,7 @@ class _NiceAsyncTableState<T> extends State<NiceAsyncTable<T>> {
         pageSizeOptions: widget.pageSizeOptions,
         showFooter: widget.showFooter,
         showPageJump: widget.showPageJump,
+        strings: widget.strings,
         density: widget.density,
         theme: widget.theme,
         compactBreakpoint: widget.compactBreakpoint,

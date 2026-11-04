@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../controller/nice_table_controller.dart';
-import '../model/nice_format.dart';
+import '../model/nice_table_strings.dart';
 import '../theme/nice_table_theme.dart';
 
 /// The page buttons to show for [pageCount] pages when [page] (1-based) is
@@ -90,6 +90,7 @@ class NiceTableFooter<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = NiceTableStrings.of(context);
     final theme = NiceTableTheme.of(context);
     // Footer type is one step smaller and lighter than cell text, with a
     // unit line height so every label centres on the 32 px controls.
@@ -121,8 +122,10 @@ class NiceTableFooter<T> extends StatelessWidget {
                 return Row(
                   children: [
                     Text(
-                      '${NiceFormat.number(total)} $rowLabel'
-                      '${selected > 0 ? ', ${NiceFormat.number(selected)} selected' : ''}',
+                      strings.rowCount(total, rowLabel) +
+                          (selected > 0
+                              ? ', ${strings.selectedCount(selected)}'
+                              : ''),
                       style: muted,
                     ),
                   ],
@@ -132,19 +135,21 @@ class NiceTableFooter<T> extends StatelessWidget {
               final options = {...pageSizeOptions, controller.pageSize}.toList()
                 ..sort();
               final range = total == 0
-                  ? '0 $rowLabel'
-                  : '${NiceFormat.number(controller.firstRowNumber)}–'
-                      '${NiceFormat.number(controller.lastRowNumber)}'
-                      ' of ${NiceFormat.number(total)}'
-                      '${w < 1000 ? '' : ' $rowLabel'}';
+                  ? strings.rowCount(0, rowLabel)
+                  : strings.rowRange(
+                      controller.firstRowNumber,
+                      controller.lastRowNumber,
+                      total,
+                      w < 1000 ? '' : rowLabel,
+                    );
               final selection = selected > 0 && !narrow
-                  ? ', ${NiceFormat.number(selected)} selected'
+                  ? ', ${strings.selectedCount(selected)}'
                   : '';
 
               return Row(
                 children: [
                   if (!medium) ...[
-                    Text('Rows per page', style: muted),
+                    Text(strings.rowsPerPage, style: muted),
                     const SizedBox(width: 8),
                   ],
                   _PageSizePicker(
@@ -196,20 +201,21 @@ class _CompactPager<T> extends StatelessWidget {
         children: [
           _NavButton(
             icon: Icons.chevron_left_rounded,
-            tooltip: 'Previous page',
+            tooltip: NiceTableStrings.of(context).previousPage,
             onPressed:
                 controller.hasPreviousPage ? controller.previousPage : null,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              '${controller.page + 1} of ${controller.pageCount}',
+              NiceTableStrings.of(context)
+                  .pageOfCount(controller.page + 1, controller.pageCount),
               style: style,
             ),
           ),
           _NavButton(
             icon: Icons.chevron_right_rounded,
-            tooltip: 'Next page',
+            tooltip: NiceTableStrings.of(context).nextPage,
             onPressed: controller.hasNextPage ? controller.nextPage : null,
           ),
         ],
@@ -235,6 +241,7 @@ class _Pager<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = NiceTableStrings.of(context);
     final theme = NiceTableTheme.of(context);
     final count = controller.pageCount;
     final current = controller.page + 1;
@@ -247,12 +254,12 @@ class _Pager<T> extends StatelessWidget {
         if (showEnds)
           _NavButton(
             icon: Icons.first_page_rounded,
-            tooltip: 'First page',
+            tooltip: strings.firstPage,
             onPressed: controller.hasPreviousPage ? controller.firstPage : null,
           ),
         _NavButton(
           icon: Icons.chevron_left_rounded,
-          tooltip: 'Previous page',
+          tooltip: strings.previousPage,
           onPressed:
               controller.hasPreviousPage ? controller.previousPage : null,
         ),
@@ -278,13 +285,13 @@ class _Pager<T> extends StatelessWidget {
         const SizedBox(width: 4),
         _NavButton(
           icon: Icons.chevron_right_rounded,
-          tooltip: 'Next page',
+          tooltip: strings.nextPage,
           onPressed: controller.hasNextPage ? controller.nextPage : null,
         ),
         if (showEnds)
           _NavButton(
             icon: Icons.last_page_rounded,
-            tooltip: 'Last page',
+            tooltip: strings.lastPage,
             onPressed: controller.hasNextPage ? controller.lastPage : null,
           ),
         if (showJump && elided) ...[
@@ -428,11 +435,12 @@ class _PageJumpState<T> extends State<_PageJump<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = NiceTableStrings.of(context);
     final theme = NiceTableTheme.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Go to', style: widget.style),
+        Text(strings.goTo, style: widget.style),
         const SizedBox(width: 6),
         // The box is drawn here and the bare field is centred inside it:
         // an input decorator sizes itself to its text, so it cannot fill
@@ -451,7 +459,7 @@ class _PageJumpState<T> extends State<_PageJump<T>> {
             ),
           ),
           child: Semantics(
-            label: 'Go to page',
+            label: strings.goToPage,
             textField: true,
             child: TextField(
               controller: _text,
@@ -495,9 +503,10 @@ class _PageSizePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = NiceTableStrings.of(context);
     final theme = NiceTableTheme.of(context);
     return Semantics(
-      label: 'Rows per page',
+      label: strings.rowsPerPage,
       child: MenuAnchor(
         style: MenuStyle(
           shape: WidgetStatePropertyAll(
