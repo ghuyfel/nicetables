@@ -1,3 +1,10 @@
+## 1.1.1
+
+- The footer's go-to-page field no longer draws a second outline inside
+  its box when the app's `InputDecorationTheme` sets outline borders: the
+  field's own decoration now turns every border slot off, not just the
+  default one `InputDecoration.collapsed` covers.
+
 ## 1.1.0
 
 - `NiceTableStrings`: every piece of text a table draws itself (search
