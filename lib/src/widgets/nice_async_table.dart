@@ -65,6 +65,7 @@ class NiceAsyncTable<T> extends StatefulWidget {
     this.showExport = false,
     this.onExport,
     this.showRefresh = true,
+    this.refreshIndicator,
     this.bulkActions,
     this.selectionMode = NiceSelectionMode.none,
     this.selectOnTap,
@@ -139,6 +140,9 @@ class NiceAsyncTable<T> extends StatefulWidget {
 
   /// Refresh button that re-runs the current query.
   final bool showRefresh;
+
+  /// See [NiceTable.refreshIndicator].
+  final Widget? refreshIndicator;
 
   /// Bulk bar buttons.
   final NiceBulkActionsBuilder<T>? bulkActions;
@@ -289,6 +293,7 @@ class _NiceAsyncTableState<T> extends State<NiceAsyncTable<T>> {
         showExport: widget.showExport,
         onExport: widget.onExport,
         onRefresh: widget.showRefresh ? _refresh : null,
+        refreshIndicator: widget.refreshIndicator,
         bulkActions: widget.bulkActions,
         selectionMode: widget.selectionMode,
         selectOnTap: widget.selectOnTap,
