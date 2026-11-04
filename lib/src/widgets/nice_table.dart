@@ -81,6 +81,7 @@ class NiceTable<T> extends StatefulWidget {
     this.showExport = false,
     this.onExport,
     this.onRefresh,
+    this.refreshIndicator,
     this.bulkActions,
     this.selectionMode = NiceSelectionMode.none,
     this.selectOnTap,
@@ -176,6 +177,12 @@ class NiceTable<T> extends StatefulWidget {
 
   /// Refresh button.
   final VoidCallback? onRefresh;
+
+  /// Shown in the refresh button while [loading], in place of the icon;
+  /// an 18 px circular progress indicator in the accent by default. Give
+  /// the app's own loader here so a refreshing table spins like the rest
+  /// of the app; it is laid out in an 18 px square.
+  final Widget? refreshIndicator;
 
   /// Buttons for the bulk bar shown while rows are selected.
   final NiceBulkActionsBuilder<T>? bulkActions;
@@ -601,6 +608,7 @@ class _NiceTableState<T> extends State<NiceTable<T>> {
                         ? _export
                         : null,
                     onRefresh: widget.onRefresh,
+                    refreshIndicator: widget.refreshIndicator,
                     bulkActions: widget.bulkActions,
                     loading: widget.loading,
                     rowLabel: rowLabel,

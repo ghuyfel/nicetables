@@ -1,3 +1,10 @@
+## 1.2.0
+
+- `NiceTable.refreshIndicator` (and the same on `NiceAsyncTable`): the
+  widget the refresh button shows while the table is `loading`, in place
+  of the default circular progress indicator, so a refreshing table can
+  spin with the app's own loader. Laid out in an 18 px square.
+
 ## 1.1.1
 
 - The footer's go-to-page field no longer draws a second outline inside

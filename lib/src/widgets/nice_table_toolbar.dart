@@ -38,6 +38,7 @@ class NiceTableToolbar<T> extends StatefulWidget {
     this.showDensityToggle = false,
     this.onExport,
     this.onRefresh,
+    this.refreshIndicator,
     this.bulkActions,
     this.loading = false,
     this.rowLabel = 'rows',
@@ -95,6 +96,9 @@ class NiceTableToolbar<T> extends StatefulWidget {
 
   /// Shows a refresh button when set.
   final VoidCallback? onRefresh;
+
+  /// Replaces the spinner in the refresh button while [loading].
+  final Widget? refreshIndicator;
 
   /// Builds buttons for the bulk bar.
   final NiceBulkActionsBuilder<T>? bulkActions;
@@ -466,10 +470,11 @@ class _NiceTableToolbarState<T> extends State<NiceTableToolbar<T>> {
               ? SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: theme.accent,
-                  ),
+                  child: widget.refreshIndicator ??
+                      CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: theme.accent,
+                      ),
                 )
               : const Icon(Icons.refresh_rounded, size: 20),
         ),
